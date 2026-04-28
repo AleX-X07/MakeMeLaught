@@ -21,6 +21,10 @@ private:
 
     std::vector<std::vector<GameObject*>> vecRender;
 
+    bool right;
+    bool left;
+    bool mid;
+
 private:
 
 public:
@@ -31,6 +35,8 @@ public:
     virtual void manageState() override;
     virtual void update(float& dt) override;
     virtual void render() override;
+
+    void hoverEffect();
 
     // Layer
     void addObjetcInLayer(GameObject* myObject, int Layer);

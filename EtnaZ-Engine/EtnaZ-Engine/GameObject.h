@@ -8,11 +8,9 @@ private:
 	sf::RectangleShape myShape;
 	sf::Texture* myTextures;
 	sf::Vector2i mousePos;
-	sf::Color* color;
-	bool left;
-	bool right;
+	sf::Color color;
+	bool hasColor;
 public:
-	bool rotate;
 
 	GameObject(sf::Vector2f Pos, sf::Vector2f Size);
 	~GameObject() = default;
@@ -22,7 +20,7 @@ public:
 
 	bool isClicked();
 	bool isHover();
-	void rotateRight();
+	void rotate(bool right, bool left);
 
 	virtual void update(float& dt);
 	virtual void render();

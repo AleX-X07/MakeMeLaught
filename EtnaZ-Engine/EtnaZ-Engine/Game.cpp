@@ -5,15 +5,19 @@
 Game* Game::instance = nullptr;
 
 Game::Game() {
+    right = false;
+    left = false;
+    mid = false;
+
     setLayer(3);
 
-    GameObject* block1 = new GameObject({0,0},{ 1920 / 2 - 250, 1080 / 2 - 350 });
-    block1->setColor(sf::Color::Blue);
+    GameObject* block1 = new GameObject({0,0},{ 1920 / 2 - 250, 1080});
+    //block1->setColor(sf::Color::Blue);
     checkHover.push_back(block1);
     addObjetcInLayer(block1,1);
 
-    GameObject* block2 = new GameObject({ 1920 / 2 - 210, 1080 / 2 - 230 }, { 1920 / 2 - 250, 1080 / 2 - 350 });
-    block2->setColor(sf::Color::Blue); 
+    GameObject* block2 = new GameObject({ 1920 / 2 + 250, 0}, { 1920 / 2 - 250, 1080 });
+    //block2->setColor(sf::Color::Blue); 
     checkHover.push_back(block2);
     addObjetcInLayer(block2, 1);
 
@@ -50,13 +54,9 @@ void Game::manageState() {
 }
 
 void Game::update(float& dt) {
+    hoverEffect();
     for (auto& e : entity) {
         e->update(dt);
-    }
-    for (auto& cH : checkHover) {
-        if (cH->isHover()) {
-            entity.back()->rotateRight();
-        }
     }
 }
 
@@ -79,4 +79,24 @@ void Game::setLayer(int _nbrLayer) {
         std::vector<GameObject*>  layer;
         vecRender.push_back(layer);
     }
+}
+
+void Game::hoverEffect() {
+    if (checkHover[0]->isHover()) {
+        mid = false;
+        left = false;
+        right = true;
+    }
+    else if (checkHover[1]->isHover()) {
+        mid = false;
+        left = true;
+        right = false;
+    }
+    else {
+        mid = true;
+        left = false;
+        right = false;
+    }
+    
+    entity[0]->rotate(right,left);
 }

@@ -3,13 +3,9 @@
 
 GameObject::GameObject(sf::Vector2f Pos, sf::Vector2f Size){
 	myTextures = nullptr;
-    color = nullptr;
+    hasColor = false;
 	myShape.setPosition(Pos);
 	myShape.setSize(Size);
-
-    left = false;
-    right = false;
-    rotate = false;
 }
 
 void GameObject::setTextures(sf::Texture& texture) {
@@ -17,7 +13,8 @@ void GameObject::setTextures(sf::Texture& texture) {
 }
 
 void GameObject::setColor(sf::Color _color) {
-    color = &_color;
+    color = _color;
+    hasColor = true;
 }
 
 bool GameObject::isClicked() {
@@ -41,16 +38,24 @@ bool GameObject::isHover() {
     return false;
 }
 
-void GameObject::rotateRight() {
-    if (!rotate) {
-        sf::Angle angle;
-        if (right) {
-            angle = sf::degrees(45);
-        }
-        else {
-            angle = sf::degrees(-45);
-        }
-        myShape.rotate(angle);
+void GameObject::rotate(bool right, bool left) {
+    sf::Vector2f size = myShape.getSize();
+    sf::Vector2f topLeft = myShape.getPosition() - myShape.getOrigin(); // coin haut-gauche réel
+
+    if (left) {
+        myShape.setOrigin({ size.x, size.y });
+        myShape.setPosition(topLeft + sf::Vector2f(size.x, size.y));
+        myShape.setRotation(sf::degrees(15));
+    }
+    else if (right) {
+        myShape.setOrigin({ 0.f, size.y });
+        myShape.setPosition(topLeft + sf::Vector2f(0.f, size.y));
+        myShape.setRotation(sf::degrees(-15));
+    }
+    else {
+        myShape.setOrigin(size / 2.f);
+        myShape.setPosition(topLeft + size / 2.f);
+        myShape.setRotation(sf::degrees(0));
     }
 }
 
@@ -63,8 +68,8 @@ void GameObject::render() {
 		myShape.setTexture(myTextures);
 		GameEngine::window->draw(myShape);
 	}
-    if (color != nullptr) {
-        myShape.setFillColor(*color);
+    else if (hasColor) {
+        myShape.setFillColor(color);
         GameEngine::window->draw(myShape);
     }
 }
