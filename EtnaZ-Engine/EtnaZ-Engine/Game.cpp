@@ -5,11 +5,30 @@
 Game* Game::instance = nullptr;
 
 Game::Game() {
-    GameObject* card = new GameObject({ 1920 / 2-150, 1080 / 2-250 }, { 300, 500 });
-    entity.push_back(card);
-
     setLayer(3);
-    addObjetcInLayer(card, 0);
+
+    GameObject* block1 = new GameObject({0,0},{ 1920 / 2 - 250, 1080 / 2 - 350 });
+    block1->setColor(sf::Color::Blue);
+    checkHover.push_back(block1);
+    addObjetcInLayer(block1,1);
+
+    GameObject* block2 = new GameObject({ 1920 / 2 - 210, 1080 / 2 - 230 }, { 1920 / 2 - 250, 1080 / 2 - 350 });
+    block2->setColor(sf::Color::Blue); 
+    checkHover.push_back(block2);
+    addObjetcInLayer(block2, 1);
+
+    GameObject* background = new GameObject({0,0},{1920,1080});
+    background->setTextures(Textures::getTexturesManager()->getTexture(Textures::texturesIndices::background));
+    addObjetcInLayer(background, 0);
+
+    GameObject* cardBackground = new GameObject({ 1920 / 2-250, 1080 / 2-350 }, { 500, 700 });
+    cardBackground->setTextures(Textures::getTexturesManager()->getTexture(Textures::texturesIndices::card_background));
+    addObjetcInLayer(cardBackground, 1);
+
+    GameObject* card = new GameObject({ 1920 / 2 - 210, 1080 / 2 - 230 }, { 420, 550 });
+    card->setTextures(Textures::getTexturesManager()->getTexture(Textures::texturesIndices::card));
+    entity.push_back(card);
+    addObjetcInLayer(card,2);
 }
 
 Game::~Game() {
@@ -33,7 +52,12 @@ void Game::manageState() {
 void Game::update(float& dt) {
     for (auto& e : entity) {
         e->update(dt);
-   }
+    }
+    for (auto& cH : checkHover) {
+        if (cH->isHover()) {
+            entity.back()->rotateRight();
+        }
+    }
 }
 
 void Game::render() {

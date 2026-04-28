@@ -3,6 +3,8 @@
 Textures* Textures::TextureManager = nullptr;
 
 Textures::Textures() {
+    loadAllTextures();
+    loadAllFont();
 }
 
 Textures* Textures::getTexturesManager() {
@@ -48,6 +50,7 @@ sf::Font& Textures::getFont(fontsIndices index) {
 void Textures::loadAllTextures() {
     loadTexture(texturesIndices::background, "Assets/Background.png");
     loadTexture(texturesIndices::card_background, "Assets/Card_Background.png");
+    loadTexture(texturesIndices::card, "Assets/Card.png");
 }
 
 void Textures::loadAllFont() {

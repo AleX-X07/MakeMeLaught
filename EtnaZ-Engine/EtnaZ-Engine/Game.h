@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "GameState.h"
 #include "Menu.h"
+#include "Textures.h"
 
 class GameEngine;
 
@@ -16,9 +17,9 @@ private:
     static Game* instance;
 
     std::vector<GameObject*> entity;
+    std::vector<GameObject*> checkHover;
 
     std::vector<std::vector<GameObject*>> vecRender;
-
 
 private:
 

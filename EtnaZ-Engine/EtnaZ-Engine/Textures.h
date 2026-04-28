@@ -9,6 +9,7 @@ public:
     enum class texturesIndices {
         background,
         card_background,
+        card,
     };
 
     enum class fontsIndices {
