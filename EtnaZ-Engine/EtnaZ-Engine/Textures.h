@@ -10,6 +10,8 @@ public:
         background,
         card_background,
         card,
+        card2,
+        card3,
     };
 
     enum class fontsIndices {

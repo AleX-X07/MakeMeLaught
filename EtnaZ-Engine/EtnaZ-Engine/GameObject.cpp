@@ -1,22 +1,26 @@
-#include "GameObject.h"
+﻿#include "GameObject.h"
 #include "GameEngine.h"
 
-GameObject::GameObject(sf::Vector2f Pos, sf::Vector2f Size){
-	myTextures = nullptr;
+GameObject::GameObject(sf::Vector2f Pos, sf::Vector2f Size) {
+    myTextures = nullptr;
     hasColor = false;
-	myShape.setPosition(Pos);
-	myShape.setSize(Size);
+    myShape.setPosition(Pos);
+    myShape.setSize(Size);
 
+    hasHoverColor = false;
+    hasText = false;
+    myText = nullptr;
+    textOffset = { 0.f, 0.f };
 
-    hasHoverColor = false;  // NEW
-    hasText = false;        // NEW
-    myText = nullptr;       // NEW
+    // On stocke le vrai coin haut-gauche une fois pour toutes
+    topLeftPos = Pos;
 
-    val = getRandomNumber(0,10);
+    val = getRandomNumber(0, 10);
+    currentType = cardType::def;
 }
 
 void GameObject::setTextures(sf::Texture& texture) {
-	myTextures = &texture;
+    myTextures = &texture;
 }
 
 void GameObject::setColor(sf::Color _color) {
@@ -27,10 +31,10 @@ void GameObject::setColor(sf::Color _color) {
 bool GameObject::isClicked() {
     if (Input::getInstance()->isMousePressed(sf::Mouse::Button::Left)) {
         mousePos = Input::getInstance()->getMousePos();
-        if (mousePos.x >= myShape.getPosition().x &&
-            mousePos.x <= myShape.getPosition().x + myShape.getSize().x &&
-            mousePos.y >= myShape.getPosition().y &&
-            mousePos.y <= myShape.getPosition().y + myShape.getSize().y) {
+        if (mousePos.x >= topLeftPos.x &&
+            mousePos.x <= topLeftPos.x + myShape.getSize().x &&
+            mousePos.y >= topLeftPos.y &&
+            mousePos.y <= topLeftPos.y + myShape.getSize().y) {
             return true;
         }
     }
@@ -45,59 +49,76 @@ bool GameObject::isHover() {
     return false;
 }
 
-// NEW
 GameObject::~GameObject() {
     delete myText;
 }
 
-// NEW
 void GameObject::setHoverColor(sf::Color _color) {
     hoverColor = _color;
     hasHoverColor = true;
 }
 
-void GameObject::setText(const std::string& str, sf::Font& font, int size) {
+// Repositionne le texte toujours depuis le vrai coin haut-gauche
+void GameObject::updateTextPosition() {
+    if (hasText && myText) {
+        sf::Vector2f size = myShape.getSize();
+        myText->setPosition({
+            topLeftPos.x + size.x / 2.f + textOffset.x,
+            topLeftPos.y + size.y / 2.f + textOffset.y
+            });
+    }
+}
+
+void GameObject::setText(const std::string& str, sf::Font& font, int size, sf::Color textColor, sf::Vector2f offset) {
     if (!myText) myText = new sf::Text(font);
     myText->setString(str);
     myText->setCharacterSize(size);
-    myText->setFillColor(sf::Color::White);
+    myText->setFillColor(textColor);
 
-    // Centre le texte dans le shape
+    textOffset = offset;
+
     sf::FloatRect textBounds = myText->getLocalBounds();
-    sf::Vector2f shapePos = myShape.getPosition();
-    sf::Vector2f shapeSize = myShape.getSize();
     myText->setOrigin({ textBounds.position.x + textBounds.size.x / 2.f,
                         textBounds.position.y + textBounds.size.y / 2.f });
-    myText->setPosition({ shapePos.x + shapeSize.x / 2.f,
-                          shapePos.y + shapeSize.y / 2.f });
+
     hasText = true;
+    updateTextPosition();
+}
+
+void GameObject::setCardType(cardType newType) {
+    currentType = newType;
+}
+
+GameObject::cardType GameObject::getCardType() {
+    return currentType;
 }
 
 void GameObject::rotate(bool right, bool left) {
     sf::Vector2f size = myShape.getSize();
-    sf::Vector2f topLeft = myShape.getPosition() - myShape.getOrigin();
 
     if (left) {
         myShape.setOrigin({ size.x, size.y });
-        myShape.setPosition(topLeft + sf::Vector2f(size.x, size.y));
+        myShape.setPosition(topLeftPos + sf::Vector2f(size.x, size.y));
         myShape.setRotation(sf::degrees(15));
     }
     else if (right) {
         myShape.setOrigin({ 0.f, size.y });
-        myShape.setPosition(topLeft + sf::Vector2f(0.f, size.y));
+        myShape.setPosition(topLeftPos + sf::Vector2f(0.f, size.y));
         myShape.setRotation(sf::degrees(-15));
     }
     else {
         myShape.setOrigin(size / 2.f);
-        myShape.setPosition(topLeft + size / 2.f);
+        myShape.setPosition(topLeftPos + size / 2.f);
         myShape.setRotation(sf::degrees(0));
     }
+
+    // Texte recalculé depuis topLeftPos : toujours correct quelle que soit la rotation
+    updateTextPosition();
 }
 
 int GameObject::getRandomNumber(int min, int max) {
     std::random_device m_rd;
     std::mt19937 m_gen(m_rd());
-
     std::uniform_int_distribution<int> dis(min, max);
     return dis(m_gen);
 }
@@ -121,7 +142,7 @@ void GameObject::render() {
         myShape.setTexture(myTextures);
         GameEngine::window->draw(myShape);
     }
-    else if (hasColor || hasHoverColor) {  // ? seulement si il a une color
+    else if (hasColor || hasHoverColor) {
         if (hasHoverColor && isHover()) {
             myShape.setFillColor(hoverColor);
         }
@@ -130,9 +151,13 @@ void GameObject::render() {
         }
         GameEngine::window->draw(myShape);
     }
-    // sinon ? invisible, rien n'est draw
 
     if (hasText && myText) {
-        GameEngine::window->draw(*myText);
+        if (currentType != cardType::def) {
+            GameEngine::window->draw(*myText, myShape.getTransform());
+        }
+        else {
+            GameEngine::window->draw(*myText);
+        }
     }
 }

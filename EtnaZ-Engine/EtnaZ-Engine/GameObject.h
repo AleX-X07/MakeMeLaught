@@ -5,20 +5,34 @@
 class GameEngine;
 
 class GameObject {
+public:
+
+	enum class cardType {
+		def,
+		soft,
+		beauf,
+		noir,
+	};
+
 private:
 	sf::RectangleShape myShape;
 	sf::Texture* myTextures;
 	sf::Vector2i mousePos;
 	sf::Color color;
-
-	sf::Color hoverColor;        // NEW
+	sf::Color hoverColor;
 
 	bool hasColor;
 	int val;
 
-	bool hasHoverColor;          // NEW
-	bool hasText;                // NEW
-	sf::Text* myText;            // NEW
+	bool hasHoverColor;
+	bool hasText;
+	sf::Text* myText;
+	sf::Vector2f textOffset;  // offset par rapport au centre du shape
+	sf::Vector2f topLeftPos;  // vrai coin haut-gauche, jamais modifié par rotate()
+
+	cardType currentType;
+
+	void updateTextPosition(); // recalcule la position du texte depuis topLeftPos
 
 public:
 
@@ -33,12 +47,14 @@ public:
 	void rotate(bool right, bool left);
 
 	void setHoverColor(sf::Color _color);
-	void setText(const std::string& str, sf::Font& font, int size);
+	void setText(const std::string& str, sf::Font& font, int size, sf::Color textColor = sf::Color::White, sf::Vector2f offset = { 0.f, 0.f });
 
-	int getRandomNumber(int min, int max);
+	void setCardType(cardType newType);
+	cardType getCardType();
+
+	static int getRandomNumber(int min, int max);
 	int getVal();
 
 	virtual void update(float& dt);
 	virtual void render();
 };
-

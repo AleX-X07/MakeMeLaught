@@ -51,6 +51,8 @@ void Textures::loadAllTextures() {
     loadTexture(texturesIndices::background, "Assets/Background.png");
     loadTexture(texturesIndices::card_background, "Assets/Card_Background.png");
     loadTexture(texturesIndices::card, "Assets/Card.png");
+    loadTexture(texturesIndices::card2, "Assets/Card2.png");
+    loadTexture(texturesIndices::card3, "Assets/Card3.png");
 }
 
 void Textures::loadAllFont() {

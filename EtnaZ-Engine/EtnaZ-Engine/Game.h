@@ -6,6 +6,7 @@
 #include "Menu.h"
 #include "Textures.h"
 #include "Jauge.h"
+#include "CardLoader.h"
 
 class GameEngine;
 
@@ -20,12 +21,18 @@ private:
     std::vector<GameObject*> entity;
     std::vector<GameObject*> checkHover;
     std::vector<Jauge*> jauges;
+    Jauge* softJauge;
+    Jauge* noirJauge;
+    Jauge* beaufJauge;
+    std::vector<GameObject*> cardVec;
 
     std::vector<std::vector<GameObject*>> vecRender;
 
     bool right;
     bool left;
     bool mid;
+
+    GameObject* currentCard;
 
 private:
 
@@ -44,5 +51,6 @@ public:
 
     // Layer
     void addObjetcInLayer(GameObject* myObject, int Layer);
+    void supprObjectInLayer(int id, int layer);
     void setLayer(int nbrLayer);
 };
