@@ -13,6 +13,7 @@ public:
     };
 
     enum class fontsIndices {
+        arial,
     };
 
 private:

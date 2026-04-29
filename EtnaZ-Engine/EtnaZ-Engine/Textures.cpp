@@ -54,5 +54,5 @@ void Textures::loadAllTextures() {
 }
 
 void Textures::loadAllFont() {
-
+    loadFont(fontsIndices::arial, "Assets/Arial.ttf");
 }

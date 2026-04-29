@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "Menu.h"
 #include "Textures.h"
+#include "Jauge.h"
 
 class GameEngine;
 
@@ -18,6 +19,7 @@ private:
 
     std::vector<GameObject*> entity;
     std::vector<GameObject*> checkHover;
+    std::vector<Jauge*> jauges;
 
     std::vector<std::vector<GameObject*>> vecRender;
 
@@ -37,6 +39,8 @@ public:
     virtual void render() override;
 
     void hoverEffect();
+
+    void nextCard();
 
     // Layer
     void addObjetcInLayer(GameObject* myObject, int Layer);
