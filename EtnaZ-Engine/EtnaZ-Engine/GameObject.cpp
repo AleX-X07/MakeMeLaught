@@ -40,7 +40,7 @@ bool GameObject::isHover() {
 
 void GameObject::rotate(bool right, bool left) {
     sf::Vector2f size = myShape.getSize();
-    sf::Vector2f topLeft = myShape.getPosition() - myShape.getOrigin(); // coin haut-gauche réel
+    sf::Vector2f topLeft = myShape.getPosition() - myShape.getOrigin();
 
     if (left) {
         myShape.setOrigin({ size.x, size.y });
